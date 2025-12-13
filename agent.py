@@ -8,6 +8,7 @@ from langchain_core.messages.base import BaseMessage
 
 from tool import get_secret
 from utils import get_final_response
+from logger import LoggerMiddleware
 
 load_dotenv()
 
@@ -21,19 +22,19 @@ agent = create_agent(
     model=model,
     tools=[get_secret],
     system_prompt="You are a helpful assistant. Use the tools provided to you if needed. Plan the steps before starting to answer or action.",
+    middleware=[LoggerMiddleware()],
 )
 
 conversation = list[BaseMessage]()
-
 
 print('Ctrl+C to exit the agent loop.')
 while True:
     print('=' * 20)
     user_prompt = input('User: ')
     conversation.append(HumanMessage(content=user_prompt))
+    print('-' * 20)
     response = agent.invoke({
         'messages': conversation,
     })
     conversation = response['messages']
-    print('-' * 20)
     print(f'Agent: {get_final_response(response)}')
