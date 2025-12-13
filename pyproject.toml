@@ -1,0 +1,12 @@
+[project]
+name = "markdownmcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp>=3.12.13",
+    "google-genai>=1.19.0",
+    "langchain[google-genai]>=1.1.3",
+    "mcp>=1.9.4",
+]
