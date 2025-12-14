@@ -93,3 +93,27 @@ async def retrieve_markdown_by_name(filename: str) -> dict:
                 return json_data
             else:
                 return []
+
+@tool('upload_md')
+async def upload_markdown(filename: str, content: str) -> bool:
+    """
+    Upload a markdown file to the markdown server.
+    You should provide the filename and the content to let this tool work.
+    The return value is a boolean which indicates that the request is accepted or not.
+
+    Args:
+        filename: The name of this markdown file,
+                  be aware that do not use special character on the file name,
+                  only alphabet (upper case or lower case are fine) and space
+        content: The markdown content to upload.
+    """
+    with aiohttp.MultipartWriter("form-data") as mpwriter:
+        part = mpwriter.append(content, {"Content-Type": "text/markdown"})
+        part.set_content_disposition("form-data", name="file", filename=filename)
+    
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                "http://localhost/upload_md",
+                data=mpwriter,
+            ) as response:
+                return response.status == 201

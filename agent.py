@@ -7,7 +7,13 @@ from langchain.chat_models import init_chat_model
 from langchain.messages import SystemMessage, AIMessage, HumanMessage
 from langchain_core.messages.base import BaseMessage
 
-from tool import get_secret, search_markdown, retrieve_markdown_by_id, retrieve_markdown_by_name
+from tool import (
+    get_secret, 
+    search_markdown, 
+    retrieve_markdown_by_id, 
+    retrieve_markdown_by_name,
+    upload_markdown,
+)
 from utils import get_final_response
 from logger import LoggerMiddleware
 
@@ -21,7 +27,7 @@ model = init_chat_model(
 
 agent = create_agent(
     model=model,
-    tools=[get_secret, search_markdown, retrieve_markdown_by_id, retrieve_markdown_by_name],
+    tools=[get_secret, search_markdown, retrieve_markdown_by_id, retrieve_markdown_by_name, upload_markdown],
     system_prompt="You are a helpful assistant. Use the tools provided to you if needed. Plan the steps before starting to answer or action.",
     middleware=[LoggerMiddleware()],
 )
