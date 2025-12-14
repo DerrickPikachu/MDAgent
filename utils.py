@@ -1,3 +1,4 @@
+import base64
 
 from typing import Any
 
@@ -15,3 +16,8 @@ def get_final_response(ai_response: dict[str, Any]) -> str:
         return ' '.join(text)
     
     raise ValueError('Unsupported message format')
+
+
+def base64_to_string(base64_str) -> str:
+    decoded_bytes = base64.b64decode(base64_str)
+    return decoded_bytes.decode('utf-8')

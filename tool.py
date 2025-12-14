@@ -4,6 +4,8 @@ import aiohttp
 from typing import Any
 from langchain.tools import tool
 
+from utils import base64_to_string
+
 @tool(
     'secret',
     description='Get a secret that hide from the world',
@@ -27,7 +29,7 @@ def get_secret(name: str) -> str:
 
 
 @tool('search_md')
-async def search_markdown(keyword: str) -> list[Any]:
+async def search_markdown(keyword: str) -> dict:
     """
     Search the markdown files by title keyword. (case insensitive)
     This tool will return a list of markdown files with the filename and the id.
@@ -45,7 +47,7 @@ async def search_markdown(keyword: str) -> list[Any]:
                 return []
 
 @tool('retrieve_md_by_id')
-async def retrieve_markdown_by_id(md_id: str) -> str:
+async def retrieve_markdown_by_id(md_id: str) -> dict:
     """
     Retrieve the markdown content through the markdown id.
     The return data contain the following information:
@@ -61,6 +63,33 @@ async def retrieve_markdown_by_id(md_id: str) -> str:
         async with session.get(f'http://localhost/mcp/retrieve_md_with_id/{md_id}') as response:
             if response.status == 200:
                 data = await response.text()
-                return json.loads(data)
+                json_data = json.loads(data)
+                json_data['content'] = base64_to_string(json_data['content'])
+                return json_data
             else:
                 return "Markdown not found"
+
+@tool('retrieve_md_by_name')
+async def retrieve_markdown_by_name(filename: str) -> dict:
+    """
+    Retrieve the markdown content through the markdown filename.
+    Note that there may be multiple markdown files with the same filename.
+    The return data contain a list with following information:
+    * _id: The id of the markdown file.
+    * filename: The filename of the markdown file.
+    * content: The markdown content.
+    If no markdown file is found, tool will return empty list.
+
+    Args:
+        filename: The filename of the markdown file to retrieve.
+    """
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'http://localhost/mcp/retrieve_md_with_name/{filename}') as response:
+            if response.status == 200:
+                data = await response.text()
+                json_data = json.loads(data)
+                for item in json_data:
+                    item['content'] = base64_to_string(item['content'])
+                return json_data
+            else:
+                return []
