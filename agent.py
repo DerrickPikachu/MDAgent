@@ -16,19 +16,21 @@ from tool import (
 )
 from utils import get_final_response
 from logger import LoggerMiddleware
+from config import load_config
 
 load_dotenv()
+config = load_config()
 
 model = init_chat_model(
+    config.llm_model,
     # "google_genai:gemini-2.0-flash",
-    "claude-3-5-haiku-latest",
     temperature=0.1,
 )
 
 agent = create_agent(
     model=model,
     tools=[get_secret, search_markdown, retrieve_markdown_by_id, retrieve_markdown_by_name, upload_markdown],
-    system_prompt="You are a helpful assistant. Use the tools provided to you if needed. Plan the steps before starting to answer or action.",
+    system_prompt=config.system_prompt,
     middleware=[LoggerMiddleware()],
 )
 

@@ -100,6 +100,7 @@ async def upload_markdown(filename: str, content: str) -> bool:
     Upload a markdown file to the markdown server.
     You should provide the filename and the content to let this tool work.
     The return value is a boolean which indicates that the request is accepted or not.
+    Use this tool when user ask you to upload.
 
     Args:
         filename: The name of this markdown file,

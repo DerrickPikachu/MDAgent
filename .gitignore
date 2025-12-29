@@ -12,3 +12,4 @@ wheels/
 # Other
 setup.sh
 .env
+config.json
